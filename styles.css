@@ -1,0 +1,257 @@
+
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;background:#061427;color:#f8fbff;overflow-x:hidden}img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
+.bgGlow{position:fixed;inset:auto;filter:blur(120px);pointer-events:none;z-index:-1}.bgGlow.one{width:420px;height:420px;border-radius:50%;background:rgba(37,99,235,.18);left:-100px;top:120px}.bgGlow.two{width:520px;height:520px;border-radius:50%;background:rgba(168,85,247,.16);right:-100px;top:260px}
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 28px;background:rgba(4,16,33,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(148,163,184,.18)}
+.brand{display:flex;align-items:center;gap:12px}.brandIcon{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,#facc15,#ec4899,#2563eb);display:grid;place-items:center;font-size:28px;box-shadow:0 10px 30px rgba(37,99,235,.25)}.brandText strong{display:block;font-size:18px}.brandText span{display:block;color:#b7c5dc;font-size:13px}
+.mainNav{display:flex;gap:22px;flex-wrap:wrap}.mainNav a{font-weight:900;color:#dbeafe;opacity:.9}.mainNav a:hover{opacity:1}
+.langSwitch{display:flex;gap:8px;padding:6px;border-radius:18px;background:#0a1d39;border:1px solid rgba(148,163,184,.16)}.langBtn{border:0;background:transparent;color:#dbeafe;min-width:58px;padding:10px 12px;border-radius:12px;font:inherit;font-weight:1000;cursor:pointer}.langBtn.active{background:linear-gradient(90deg,#2563eb,#7c3aed);box-shadow:0 8px 24px rgba(37,99,235,.25)}
+.sectionWrap{width:min(1280px, calc(100% - 48px));margin:0 auto}.sectionBlock{padding:84px 0}.hero{display:grid;grid-template-columns:1.08fr .92fr;gap:36px;align-items:center;padding:62px 0 70px;min-height:calc(100vh - 90px)}.pill{display:inline-flex;align-items:center;padding:8px 14px;border-radius:999px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.22);color:#fde68a;font-weight:1000}.hero h1{font-size:clamp(44px,6vw,82px);line-height:1.02;margin:18px 0}.hero .lead{font-size:19px;color:#c8d4e6;line-height:1.8;max-width:760px}.heroPoints{display:grid;grid-template-columns:1fr;gap:10px;margin:24px 0 28px}.heroPoints div{background:rgba(15,30,56,.72);border:1px solid rgba(148,163,184,.14);padding:13px 16px;border-radius:16px;color:#dbeafe;font-weight:800}.ctaRow{display:flex;gap:14px;flex-wrap:wrap}.btn{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:18px;padding:14px 20px;font-weight:1000;cursor:pointer}.btn.primary{color:#fff;background:linear-gradient(90deg,#2563eb,#7c3aed);box-shadow:0 12px 32px rgba(37,99,235,.28)}.btn.glass{background:rgba(255,255,255,.07);border:1px solid rgba(148,163,184,.18);color:#fff}.btn.large{padding:18px 28px;font-size:18px}.btn.full{width:100%}
+.miniStats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}.miniStats article{background:rgba(12,27,50,.85);border:1px solid rgba(148,163,184,.15);padding:20px;border-radius:22px}.miniStats strong{display:block;font-size:34px}.miniStats span{color:#c9d5e7;font-weight:900}
+.heroVisual{position:relative;min-height:620px}.heroCard.mainScreen{position:absolute;inset:40px 30px 40px 0;background:linear-gradient(180deg,rgba(17,33,60,.9),rgba(9,22,45,.95));border:1px solid rgba(148,163,184,.16);border-radius:28px;padding:18px;box-shadow:0 26px 70px rgba(0,0,0,.38)}.heroCard.mainScreen img{height:100%;width:100%;object-fit:cover;border-radius:18px}.heroFloat{position:absolute;background:rgba(8,19,39,.92);border:1px solid rgba(148,163,184,.18);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.35)}.promoCard{width:220px;right:-10px;top:10px;padding:10px}.promoCard img{border-radius:16px}.badgeCard{left:10px;bottom:0;padding:18px 20px;max-width:280px}.badgeCard b{display:block;font-size:18px;margin-bottom:6px}.badgeCard span{color:#c9d5e7;line-height:1.6}
+.sectionHead h2{font-size:clamp(34px,4.2vw,56px);line-height:1.1;margin:14px 0}.sectionHead p{color:#b7c5dc;font-size:18px;line-height:1.8;max-width:860px}.narrowCenter{text-align:center;max-width:960px;margin:0 auto 10px}.splitHead{display:flex;justify-content:space-between;gap:24px;align-items:end;flex-wrap:wrap}
+.painGrid,.valueGrid,.priceGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:28px}.valueGrid,.priceGrid{grid-template-columns:repeat(3,1fr)}.painGrid article,.valueGrid article,.priceCard{background:rgba(10,24,45,.86);border:1px solid rgba(148,163,184,.14);border-radius:26px;padding:24px;box-shadow:0 18px 40px rgba(0,0,0,.22)}.painGrid h3,.valueGrid h3,.priceCard h3{margin:0 0 10px;font-size:24px}.painGrid p,.valueGrid p,.priceCard p{margin:0;color:#c6d3e4;line-height:1.75}.painIcon{font-size:34px;margin-bottom:12px}
+.darkPanel{padding:72px 28px;border-radius:34px;background:linear-gradient(180deg,rgba(8,22,42,.9),rgba(6,18,36,.96));border:1px solid rgba(148,163,184,.16)}
+.stepsBand{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}.stepBox{display:flex;gap:16px;background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.14);padding:22px;border-radius:22px}.stepBox b{font-size:40px;color:#60a5fa;line-height:1}.stepBox h4{margin:0 0 8px;font-size:22px}.stepBox p{margin:0;color:#c9d5e7}
+.filters{display:flex;gap:10px;flex-wrap:wrap}.filter{border:1px solid rgba(148,163,184,.18);background:#0b1c35;color:#fff;border-radius:999px;padding:10px 16px;font-weight:1000;cursor:pointer}.filter.active{background:linear-gradient(90deg,#2563eb,#7c3aed)}
+.gameGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}.gameCard{background:linear-gradient(180deg,rgba(12,27,52,.95),rgba(8,20,40,.98));border:1px solid rgba(148,163,184,.16);border-radius:28px;overflow:hidden;box-shadow:0 20px 42px rgba(0,0,0,.25);display:flex;flex-direction:column}.gameThumb{position:relative;height:230px;background:#08172d}.gameThumb img{width:100%;height:100%;object-fit:cover}.codeBadge{position:absolute;left:16px;top:16px;background:rgba(8,19,40,.86);border:1px solid rgba(255,255,255,.18);padding:8px 12px;border-radius:999px;color:#fff;font-weight:1000}.levelBadge{position:absolute;right:16px;top:16px;background:linear-gradient(90deg,#2563eb,#7c3aed);padding:8px 12px;border-radius:999px;font-weight:1000}.gameBody{padding:20px 20px 18px;display:flex;flex-direction:column;gap:14px;flex:1}.gameBody h3{margin:0;font-size:28px}.gameBody p{margin:0;color:#c4d2e5;line-height:1.7}.gameMeta{display:flex;justify-content:space-between;align-items:center;color:#fde68a;font-weight:1000}.gameActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto}.miniBtn{border:1px solid rgba(148,163,184,.2);background:rgba(255,255,255,.06);color:#fff;padding:12px 14px;border-radius:14px;font-weight:1000;cursor:pointer}.miniBtn.primary{background:linear-gradient(90deg,#2563eb,#7c3aed);border:0}
+.priceCard{position:relative}.priceCard ul{margin:14px 0 18px;padding-left:18px;color:#dbeafe;line-height:1.8}.featured{border-color:rgba(250,204,21,.4)}.bestValue{border-color:rgba(74,222,128,.4);background:linear-gradient(180deg,rgba(9,30,53,.95),rgba(7,23,43,.98))}.ribbon{position:absolute;top:18px;right:18px;border-radius:999px;padding:6px 11px;background:#facc15;color:#111827;font-weight:1000}.ribbon.green{background:#4ade80;color:#052e16}.bonusTag{display:inline-flex;margin-top:8px;padding:8px 12px;border-radius:999px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.28);color:#dcfce7;font-weight:1000}
+.checkoutBlock{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;margin-top:28px}.checkoutLeft,.checkoutRight{background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.14);border-radius:28px;padding:24px}.checkoutLeft h3,.checkoutRight h3{margin-top:0;font-size:28px}.checkoutLeft p,.checkoutRight p{color:#c6d3e4}.formGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}input,select{border:1px solid rgba(148,163,184,.2);background:#081a34;color:#fff;border-radius:14px;padding:12px 14px;font:inherit}.purchaseHeader{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.purchaseHeader span{color:#aabbd3;font-size:14px}.purchaseList{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:380px;overflow:auto;padding-right:4px;margin:16px 0 18px}.purchase{display:flex;gap:8px;align-items:center;background:#08172d;border:1px solid rgba(148,163,184,.16);padding:10px;border-radius:14px;font-size:13px}.purchase strong{margin-left:auto;color:#fde68a}pre{white-space:pre-wrap;background:#08172d;border:1px solid rgba(148,163,184,.16);border-radius:18px;padding:18px;min-height:340px;color:#dbeafe;line-height:1.7}
+.finalCta{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:70px 0 86px}.finalCta h2{font-size:clamp(34px,4vw,58px);margin:14px 0}.finalCta p{color:#c4d2e5;font-size:18px;line-height:1.75;max-width:720px}
+.modal,.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.74);display:flex;align-items:center;justify-content:center;padding:18px;z-index:120}.hidden{display:none}.modalCard{position:relative;width:min(1220px,100%);max-height:94vh;overflow:auto;border-radius:30px;background:#07182f;border:1px solid rgba(148,163,184,.16);box-shadow:0 26px 80px rgba(0,0,0,.45)}.closeBtn{position:absolute;top:14px;right:14px;width:42px;height:42px;border:0;border-radius:50%;background:#ef4444;color:#fff;font-size:28px;cursor:pointer;z-index:5}.modalContent{padding:28px}.modalTop{display:grid;grid-template-columns:1fr .9fr;gap:22px}.previewPanel{display:flex;flex-direction:column;gap:12px}.previewTabs{display:flex;gap:10px;flex-wrap:wrap}.previewTab{padding:10px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.16);background:#0b1d3a;color:#fff;font-weight:1000;cursor:pointer}.previewTab.active{background:linear-gradient(90deg,#2563eb,#7c3aed)}.previewFrame{position:relative;background:#08172d;border:1px solid rgba(148,163,184,.16);border-radius:20px;padding:12px}.previewFrame img{width:100%;max-height:680px;object-fit:contain;border-radius:16px;background:#091b33}.viewSingle{position:absolute;right:24px;bottom:24px;padding:10px 14px;border-radius:14px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:1000;cursor:pointer}
+.infoPanel{display:flex;flex-direction:column;gap:12px}.infoPanel .titleLine{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.codeChip{padding:8px 12px;border-radius:999px;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.24);color:#bfdbfe;font-weight:1000}.levelChip{padding:8px 12px;border-radius:999px;background:rgba(250,204,21,.14);border:1px solid rgba(250,204,21,.24);color:#fde68a;font-weight:1000}.infoPanel h2{font-size:48px;line-height:1.05;margin:0}.infoPanel p{margin:0;color:#c9d6e9;line-height:1.8}.highlights{display:flex;flex-wrap:wrap;gap:10px}.highlight{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.24);color:#dcfce7;font-weight:1000}.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}.detailCard,.formatCard{background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.14);border-radius:18px;padding:15px 16px}.detailCard h4,.formatCard h4{margin:0 0 8px;font-size:17px;color:#dbeafe}.detailCard p,.formatCard p{margin:0;color:#c6d3e4}.metaRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lightbox{z-index:140;background:rgba(0,0,0,.86)}#lightboxImg{max-width:min(94vw,1500px);max-height:90vh;border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.45)}.lightClose{position:fixed;top:18px;right:18px}
+@media (max-width:1100px){.hero,.modalTop,.checkoutBlock{grid-template-columns:1fr}.gameGrid,.painGrid,.valueGrid,.priceGrid,.stepsBand{grid-template-columns:1fr 1fr}.purchaseList{grid-template-columns:1fr 1fr}.heroVisual{min-height:520px}.heroCard.mainScreen{inset:20px 20px 80px 0}.promoCard{width:190px}.finalCta{flex-direction:column;align-items:flex-start}}
+@media (max-width:760px){.topbar{padding:14px 16px;flex-direction:column;align-items:flex-start}.mainNav{gap:14px}.sectionWrap{width:min(100% - 28px,1280px)}.hero{grid-template-columns:1fr;padding-top:36px;min-height:auto}.miniStats,.painGrid,.valueGrid,.priceGrid,.stepsBand,.gameGrid,.purchaseList,.formGrid,.detailGrid,.metaRow{grid-template-columns:1fr}.heroVisual{min-height:420px}.heroCard.mainScreen{inset:14px 0 80px 0}.promoCard{display:none}.badgeCard{left:0;right:0;max-width:none}.modalContent{padding:20px}.infoPanel h2{font-size:38px}.gameActions{grid-template-columns:1fr}.sectionBlock{padding:62px 0}}
+
+
+/* === v4 sales enhancement === */
+.stickyCta{position:sticky;top:83px;z-index:55;margin:0 auto;width:min(1280px,calc(100% - 48px));display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 16px;border:1px solid rgba(250,204,21,.25);background:linear-gradient(90deg,rgba(250,204,21,.14),rgba(37,99,235,.16));backdrop-filter:blur(14px);border-radius:0 0 22px 22px;box-shadow:0 16px 40px rgba(0,0,0,.22)}
+.stickyCta span{color:#fde68a;font-weight:1000}
+.stickyCta a{background:#facc15;color:#111827;border-radius:999px;padding:8px 14px;font-weight:1000;text-decoration:none}
+.socialProof{padding:32px 0 0}
+.proofCard{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center;padding:28px;border-radius:34px;background:linear-gradient(135deg,rgba(37,99,235,.20),rgba(124,58,237,.18));border:1px solid rgba(148,163,184,.18);box-shadow:0 18px 54px rgba(0,0,0,.24)}
+.proofCard h2{font-size:clamp(30px,3.5vw,52px);margin:14px 0 8px;line-height:1.1}
+.proofCard p{color:#c9d6e9;line-height:1.75}
+.proofStats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.proofStats article{background:rgba(5,18,36,.72);border:1px solid rgba(148,163,184,.16);border-radius:22px;padding:20px;text-align:center}
+.proofStats strong{display:block;font-size:34px;color:#fff}
+.proofStats span{display:block;margin-top:8px;color:#cbd5e1;font-weight:900}
+.compareGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+.compareGrid article{border-radius:28px;padding:26px;border:1px solid rgba(148,163,184,.18);box-shadow:0 18px 44px rgba(0,0,0,.22)}
+.compareBad{background:linear-gradient(180deg,rgba(127,29,29,.35),rgba(7,24,47,.85))}
+.compareGood{background:linear-gradient(180deg,rgba(22,101,52,.35),rgba(7,24,47,.85))}
+.compareGrid h3{font-size:30px;margin:0 0 16px}
+.compareGrid ul,.recommendGrid ul{margin:0;padding-left:20px;color:#dbeafe;line-height:2;font-weight:800}
+.compareGrid li{margin-bottom:4px}
+.recommendGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.recommendGrid article{background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.16);border-radius:26px;padding:26px;text-align:center}
+.recommendIcon{font-size:42px;margin-bottom:12px}
+.recommendGrid h3{font-size:26px;margin:0 0 10px}
+.recommendGrid p{color:#c9d6e9;line-height:1.75}
+.centerCta{display:flex;justify-content:center;margin-top:28px}
+.faqGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+.faqGrid details{background:rgba(10,24,45,.86);border:1px solid rgba(148,163,184,.16);border-radius:22px;padding:20px}
+.faqGrid summary{font-size:20px;font-weight:1000;cursor:pointer}
+.faqGrid p{color:#c9d6e9;line-height:1.75;margin:14px 0 0}
+.whatsapp{margin-top:10px;background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;text-decoration:none}
+.priceCard.bestValue{transform:scale(1.03);box-shadow:0 24px 72px rgba(34,197,94,.15)}
+.priceCard.bestValue h3:after{content:" ⭐";color:#facc15}
+@media (max-width:1100px){
+  .proofCard,.compareGrid{grid-template-columns:1fr}
+  .proofStats,.recommendGrid,.faqGrid{grid-template-columns:1fr}
+  .stickyCta{top:0;border-radius:0 0 18px 18px;flex-wrap:wrap}
+}
+@media (max-width:760px){
+  .stickyCta{width:100%;font-size:14px}
+  .proofStats{grid-template-columns:1fr}
+}
+
+
+/* === v5 purchase flow + tier color enhancement === */
+.gameCard.level-S{border-color:rgba(34,197,94,.34)}
+.gameCard.level-P{border-color:rgba(59,130,246,.34)}
+.gameCard.level-H{border-color:rgba(249,115,22,.38)}
+.gameCard.level-S .levelBadge,.purchaseGroup.level-S .groupTitle,.purchase.level-S .levelMini{background:linear-gradient(90deg,#16a34a,#22c55e);color:#052e16}
+.gameCard.level-P .levelBadge,.purchaseGroup.level-P .groupTitle,.purchase.level-P .levelMini{background:linear-gradient(90deg,#2563eb,#38bdf8);color:#fff}
+.gameCard.level-H .levelBadge,.purchaseGroup.level-H .groupTitle,.purchase.level-H .levelMini{background:linear-gradient(90deg,#f97316,#ef4444);color:#fff}
+.gameCard.level-S .codeBadge{border-color:rgba(34,197,94,.38)}
+.gameCard.level-P .codeBadge{border-color:rgba(59,130,246,.38)}
+.gameCard.level-H .codeBadge{border-color:rgba(249,115,22,.38)}
+.checkoutStepLabel{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.22);color:#bfdbfe;font-weight:1000;margin-bottom:10px}
+.planGuide{margin:18px 0;padding:16px;border-radius:18px;background:rgba(250,204,21,.10);border:1px solid rgba(250,204,21,.24);color:#fde68a;font-weight:900;line-height:1.7}
+.purchaseGrouped{display:block;max-height:470px;overflow:auto;padding-right:6px}
+.purchaseGroup{margin:0 0 16px}
+.purchaseGroup .groupTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:16px;padding:11px 14px;font-weight:1000;margin-bottom:10px}
+.purchaseGroup .groupHint{font-size:13px;opacity:.9;font-weight:800}
+.purchaseGroup .groupList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.purchase{position:relative;min-height:58px}
+.purchase.level-S{border-color:rgba(34,197,94,.28);background:rgba(6,42,31,.42)}
+.purchase.level-P{border-color:rgba(59,130,246,.28);background:rgba(8,31,66,.42)}
+.purchase.level-H{border-color:rgba(249,115,22,.28);background:rgba(70,31,12,.36)}
+.purchase .levelMini{font-size:11px;border-radius:999px;padding:3px 7px;font-weight:1000}
+.purchase input:disabled + span{opacity:.7}
+.selectionSummary{background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.16);border-radius:20px;padding:16px;margin:14px 0 14px;color:#dbeafe;line-height:1.75}
+.selectionSummary h4{margin:0 0 10px;font-size:20px;color:#fff}
+.selectionSummary .summaryItems{display:grid;gap:6px;margin-top:8px}
+.selectionSummary .summaryItem{display:flex;justify-content:space-between;gap:10px;background:rgba(8,23,45,.72);border:1px solid rgba(148,163,184,.12);border-radius:12px;padding:8px 10px}
+.selectionSummary .warning{color:#fde68a;font-weight:1000}
+#confirmSelection{margin-bottom:14px}
+.paymentPanel{background:linear-gradient(180deg,rgba(7,36,27,.70),rgba(8,23,45,.78));border:1px solid rgba(34,197,94,.24);border-radius:22px;padding:18px;margin:14px 0}
+.paymentPanel h4{font-size:24px;margin:0 0 12px}
+.paymentAmount{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.14);border-radius:16px;padding:14px;margin-bottom:12px}
+.paymentAmount strong{font-size:34px;color:#86efac}
+.paymentInfo{display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center}
+.paymentInfo p{font-size:15px;margin:8px 0 0;color:#c9d6e9}
+.qrPlaceholder{height:130px;border:2px dashed rgba(134,239,172,.35);border-radius:20px;display:grid;place-items:center;text-align:center;color:#dcfce7}
+.qrPlaceholder span{font-size:34px;font-weight:1000}.qrPlaceholder small{display:block;margin-top:-28px}
+.uploadBox{margin:14px 0;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.14)}
+.uploadBox label{display:block;font-weight:1000;margin-bottom:10px;color:#dbeafe}
+.uploadBox input{width:100%}
+.proofName{margin-top:10px;color:#fde68a;font-weight:900}
+.receiptNotice{background:rgba(250,204,21,.10);border:1px solid rgba(250,204,21,.22);border-radius:16px;padding:14px}
+.receiptNotice p{margin:6px 0 0;font-size:15px;color:#fef3c7}
+@media(max-width:760px){.purchaseGroup .groupList{grid-template-columns:1fr}.paymentInfo{grid-template-columns:1fr}.qrPlaceholder{height:110px}}
+
+
+/* === v6 purchase flow fixes === */
+.saveTag{display:inline-flex;margin:8px 0 16px;padding:8px 12px;border-radius:999px;background:rgba(250,204,21,.14);border:1px solid rgba(250,204,21,.28);color:#fef3c7;font-weight:1000}
+.purchaseGrouped{display:block!important;min-height:180px}
+.purchaseGroup{display:block;margin:0 0 18px}
+.purchaseGroup .groupTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:16px;padding:12px 14px;font-weight:1000;margin:0 0 10px}
+.purchaseGroup.level-S .groupTitle{background:linear-gradient(90deg,#16a34a,#22c55e);color:#052e16}
+.purchaseGroup.level-P .groupTitle{background:linear-gradient(90deg,#2563eb,#38bdf8);color:#fff}
+.purchaseGroup.level-H .groupTitle{background:linear-gradient(90deg,#f97316,#ef4444);color:#fff}
+.purchaseGroup .groupHint{font-size:13px;font-weight:1000;opacity:.92}
+.purchaseGroup .groupList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.purchase.level-S{border-color:rgba(34,197,94,.38)!important;background:rgba(6,42,31,.42)!important}
+.purchase.level-P{border-color:rgba(59,130,246,.38)!important;background:rgba(8,31,66,.42)!important}
+.purchase.level-H{border-color:rgba(249,115,22,.38)!important;background:rgba(70,31,12,.36)!important}
+.levelMini{font-size:11px;border-radius:999px;padding:3px 7px;font-weight:1000;white-space:nowrap}
+.purchase.level-S .levelMini{background:#22c55e;color:#052e16}
+.purchase.level-P .levelMini{background:#3b82f6;color:#fff}
+.purchase.level-H .levelMini{background:#f97316;color:#fff}
+.purchase input:disabled + span{opacity:.78}
+.gameCard.level-S{border-color:rgba(34,197,94,.42)!important}
+.gameCard.level-P{border-color:rgba(59,130,246,.42)!important}
+.gameCard.level-H{border-color:rgba(249,115,22,.42)!important}
+.gameCard.level-S .levelBadge{background:linear-gradient(90deg,#16a34a,#22c55e)!important;color:#052e16!important}
+.gameCard.level-P .levelBadge{background:linear-gradient(90deg,#2563eb,#38bdf8)!important;color:#fff!important}
+.gameCard.level-H .levelBadge{background:linear-gradient(90deg,#f97316,#ef4444)!important;color:#fff!important}
+.selectionSummary{background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.16);border-radius:20px;padding:16px;margin:14px 0;color:#dbeafe;line-height:1.75}
+.selectionSummary h4{margin:0 0 10px;font-size:20px;color:#fff}
+.selectionSummary .summaryItems{display:grid;gap:7px;margin-top:10px}
+.selectionSummary .summaryItem{display:flex;justify-content:space-between;gap:10px;background:rgba(8,23,45,.72);border:1px solid rgba(148,163,184,.12);border-radius:12px;padding:8px 10px}
+.selectionSummary .warning{color:#fde68a;font-weight:1000}
+.paymentPanel{background:linear-gradient(180deg,rgba(7,36,27,.70),rgba(8,23,45,.78));border:1px solid rgba(34,197,94,.24);border-radius:22px;padding:18px;margin:14px 0}
+.paymentPanel.hidden{display:none!important}
+.paymentPanel h4{font-size:24px;margin:0 0 12px}
+.paymentAmount{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.14);border-radius:16px;padding:14px;margin-bottom:12px}
+.paymentAmount strong{font-size:34px;color:#86efac}
+.paymentInfo{display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center}
+.paymentInfo p{font-size:15px;margin:8px 0 0;color:#c9d6e9}
+.qrPlaceholder{height:130px;border:2px dashed rgba(134,239,172,.35);border-radius:20px;display:grid;place-items:center;text-align:center;color:#dcfce7}
+.qrPlaceholder span{font-size:34px;font-weight:1000}.qrPlaceholder small{display:block;margin-top:-28px}
+.uploadBox{margin:14px 0;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.14)}
+.uploadBox label{display:block;font-weight:1000;margin-bottom:10px;color:#dbeafe}
+.uploadBox input{width:100%}
+.proofName{margin-top:10px;color:#fde68a;font-weight:900}
+.receiptNotice{background:rgba(250,204,21,.10);border:1px solid rgba(250,204,21,.22);border-radius:16px;padding:14px}
+.receiptNotice p{margin:6px 0 0;font-size:15px;color:#fef3c7}
+.planGuide{margin:18px 0;padding:16px;border-radius:18px;background:rgba(250,204,21,.10);border:1px solid rgba(250,204,21,.24);color:#fde68a;font-weight:900;line-height:1.7}
+#confirmSelection:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:760px){.purchaseGroup .groupList{grid-template-columns:1fr}.paymentInfo{grid-template-columns:1fr}.qrPlaceholder{height:110px}}
+
+
+/* === v7 discount summary + language hero fixes === */
+.saveTag{display:inline-flex;margin:8px 0 16px;padding:8px 12px;border-radius:999px;background:rgba(250,204,21,.14);border:1px solid rgba(250,204,21,.28);color:#fef3c7;font-weight:1000}
+.discountRows{display:grid;gap:8px;margin:12px 0}
+.discountRow{display:flex;justify-content:space-between;gap:10px;padding:9px 11px;border-radius:13px;background:rgba(8,23,45,.78);border:1px solid rgba(148,163,184,.12)}
+.discountRow strong{color:#fff}
+.discountRow.saving{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.28);color:#dcfce7}
+.discountRow.saving strong{color:#86efac}
+.heroCard.mainScreen img#heroLangImage{object-fit:cover}
+.purchaseGrouped{display:block!important;min-height:210px}
+.purchaseGroup{display:block;margin:0 0 18px}
+.purchaseGroup .groupTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:16px;padding:12px 14px;font-weight:1000;margin:0 0 10px}
+.purchaseGroup.level-S .groupTitle{background:linear-gradient(90deg,#16a34a,#22c55e);color:#052e16}
+.purchaseGroup.level-P .groupTitle{background:linear-gradient(90deg,#2563eb,#38bdf8);color:#fff}
+.purchaseGroup.level-H .groupTitle{background:linear-gradient(90deg,#f97316,#ef4444);color:#fff}
+.purchaseGroup .groupHint{font-size:13px;font-weight:1000;opacity:.92}
+.purchaseGroup .groupList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.purchase.level-S{border-color:rgba(34,197,94,.38)!important;background:rgba(6,42,31,.42)!important}
+.purchase.level-P{border-color:rgba(59,130,246,.38)!important;background:rgba(8,31,66,.42)!important}
+.purchase.level-H{border-color:rgba(249,115,22,.38)!important;background:rgba(70,31,12,.36)!important}
+.levelMini{font-size:11px;border-radius:999px;padding:3px 7px;font-weight:1000;white-space:nowrap}
+.purchase.level-S .levelMini{background:#22c55e;color:#052e16}
+.purchase.level-P .levelMini{background:#3b82f6;color:#fff}
+.purchase.level-H .levelMini{background:#f97316;color:#fff}
+.paymentPanel.hidden{display:none!important}
+@media(max-width:760px){.purchaseGroup .groupList{grid-template-columns:1fr}}
+
+
+/* === v8 confirm purchase button === */
+#copy.confirmPurchaseBtn{
+  background:linear-gradient(90deg,#f59e0b,#facc15)!important;
+  color:#111827!important;
+  border:0!important;
+  font-weight:1000!important;
+}
+#copy.confirmPurchaseBtn:hover{
+  filter:brightness(1.05);
+  transform:translateY(-1px);
+}
+
+
+/* === v11 confirm purchase + DuitNow QR === */
+#copy.confirmPurchaseBtn{
+  background:linear-gradient(90deg,#f59e0b,#facc15)!important;
+  color:#111827!important;
+  border:0!important;
+  font-weight:1000!important;
+}
+#copy.confirmPurchaseBtn:hover{
+  filter:brightness(1.05);
+  transform:translateY(-1px);
+}
+.qrImageBox{
+  min-height:260px!important;
+  height:auto!important;
+  padding:10px!important;
+  background:#ffffff!important;
+  border:2px solid rgba(59,130,246,.55)!important;
+  color:#111827!important;
+}
+.qrImageBox img{
+  display:block;
+  width:100%;
+  max-width:260px;
+  height:auto;
+  margin:0 auto;
+  border-radius:12px;
+  object-fit:contain;
+  background:#fff;
+}
+.qrImageBox small{
+  display:block!important;
+  margin:8px 0 0!important;
+  color:#0f172a!important;
+  font-weight:1000!important;
+  text-align:center;
+}
+@media(max-width:760px){
+  .qrImageBox{min-height:220px!important;}
+  .qrImageBox img{max-width:220px;}
+}
+
+
+/* === v12 stable button fix === */
+button,a,input,select,label,.gameCard,.miniBtn,.filter,.langBtn{pointer-events:auto!important;}
+#copy.confirmPurchaseBtn{background:linear-gradient(90deg,#f59e0b,#facc15)!important;color:#111827!important;border:0!important;font-weight:1000!important;}
+.purchaseGrouped{display:block!important;min-height:220px;}
+.purchaseGroup{display:block;margin:0 0 18px;}.purchaseGroup .groupTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:16px;padding:12px 14px;font-weight:1000;margin:0 0 10px;}
+.purchaseGroup.level-S .groupTitle{background:linear-gradient(90deg,#16a34a,#22c55e);color:#052e16}.purchaseGroup.level-P .groupTitle{background:linear-gradient(90deg,#2563eb,#38bdf8);color:#fff}.purchaseGroup.level-H .groupTitle{background:linear-gradient(90deg,#f97316,#ef4444);color:#fff}
+.purchaseGroup .groupList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.purchase.level-S{border-color:rgba(34,197,94,.38)!important;background:rgba(6,42,31,.42)!important}.purchase.level-P{border-color:rgba(59,130,246,.38)!important;background:rgba(8,31,66,.42)!important}.purchase.level-H{border-color:rgba(249,115,22,.38)!important;background:rgba(70,31,12,.36)!important}
+.levelMini{font-size:11px;border-radius:999px;padding:3px 7px;font-weight:1000;white-space:nowrap}.purchase.level-S .levelMini{background:#22c55e;color:#052e16}.purchase.level-P .levelMini{background:#3b82f6;color:#fff}.purchase.level-H .levelMini{background:#f97316;color:#fff}
+.gameCard.level-S{border-color:rgba(34,197,94,.42)!important}.gameCard.level-P{border-color:rgba(59,130,246,.42)!important}.gameCard.level-H{border-color:rgba(249,115,22,.42)!important}.gameCard.level-S .levelBadge{background:linear-gradient(90deg,#16a34a,#22c55e)!important;color:#052e16!important}.gameCard.level-P .levelBadge{background:linear-gradient(90deg,#2563eb,#38bdf8)!important;color:#fff!important}.gameCard.level-H .levelBadge{background:linear-gradient(90deg,#f97316,#ef4444)!important;color:#fff!important}
+.discountRows{display:grid;gap:8px;margin:12px 0}.discountRow{display:flex;justify-content:space-between;gap:10px;padding:9px 11px;border-radius:13px;background:rgba(8,23,45,.78);border:1px solid rgba(148,163,184,.12)}.discountRow strong{color:#fff}.discountRow.saving{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.28);color:#dcfce7}.discountRow.saving strong{color:#86efac}
+#confirmSelection:disabled{opacity:.48;cursor:not-allowed}.paymentPanel.hidden{display:none!important}.qrImageBox img{max-width:100%;border-radius:18px;background:#fff}@media(max-width:760px){.purchaseGroup .groupList{grid-template-columns:1fr}.paymentInfo{grid-template-columns:1fr}}
