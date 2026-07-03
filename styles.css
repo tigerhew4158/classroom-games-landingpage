@@ -255,3 +255,53 @@ button,a,input,select,label,.gameCard,.miniBtn,.filter,.langBtn{pointer-events:a
 .gameCard.level-S{border-color:rgba(34,197,94,.42)!important}.gameCard.level-P{border-color:rgba(59,130,246,.42)!important}.gameCard.level-H{border-color:rgba(249,115,22,.42)!important}.gameCard.level-S .levelBadge{background:linear-gradient(90deg,#16a34a,#22c55e)!important;color:#052e16!important}.gameCard.level-P .levelBadge{background:linear-gradient(90deg,#2563eb,#38bdf8)!important;color:#fff!important}.gameCard.level-H .levelBadge{background:linear-gradient(90deg,#f97316,#ef4444)!important;color:#fff!important}
 .discountRows{display:grid;gap:8px;margin:12px 0}.discountRow{display:flex;justify-content:space-between;gap:10px;padding:9px 11px;border-radius:13px;background:rgba(8,23,45,.78);border:1px solid rgba(148,163,184,.12)}.discountRow strong{color:#fff}.discountRow.saving{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.28);color:#dcfce7}.discountRow.saving strong{color:#86efac}
 #confirmSelection:disabled{opacity:.48;cursor:not-allowed}.paymentPanel.hidden{display:none!important}.qrImageBox img{max-width:100%;border-radius:18px;background:#fff}@media(max-width:760px){.purchaseGroup .groupList{grid-template-columns:1fr}.paymentInfo{grid-template-columns:1fr}}
+
+
+/* === v15 QR payment image size adjustment only === */
+.paymentInfo{
+  grid-template-columns: 1fr minmax(280px, 360px) !important;
+  align-items: center !important;
+  gap: 24px !important;
+}
+.qrPlaceholder{
+  width: min(360px, 100%) !important;
+  min-height: 430px !important;
+  height: auto !important;
+  padding: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255,255,255,.06) !important;
+}
+.qrPlaceholder img,
+.paymentInfo img,
+.paymentPanel img[src*="DUITNOW"],
+.paymentPanel img[src*="duitnow"],
+.paymentPanel img[src*="Touch"],
+.paymentPanel img[src*="QR"]{
+  width: min(320px, 100%) !important;
+  max-width: 320px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+  border-radius: 20px !important;
+}
+@media (max-width: 900px){
+  .paymentInfo{
+    grid-template-columns: 1fr !important;
+  }
+  .qrPlaceholder{
+    width: 100% !important;
+    min-height: auto !important;
+  }
+  .qrPlaceholder img,
+  .paymentInfo img,
+  .paymentPanel img[src*="DUITNOW"],
+  .paymentPanel img[src*="duitnow"],
+  .paymentPanel img[src*="Touch"],
+  .paymentPanel img[src*="QR"]{
+    width: min(340px, 92vw) !important;
+    max-width: 340px !important;
+  }
+}
