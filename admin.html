@@ -7,36 +7,45 @@
   <style>
     *{box-sizing:border-box}
     body{margin:0;font-family:"Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;background:#071527;color:#f8fbff}
-    .wrap{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:28px 0 60px}
+    .wrap{width:min(1320px,calc(100% - 32px));margin:0 auto;padding:28px 0 60px}
     h1{font-size:38px;margin:0 0 10px}
+    h2{font-size:25px;margin:0 0 5px}
     p{color:#cbd5e1;line-height:1.7}
     .login,.toolbar,.order{background:#0d213e;border:1px solid rgba(147,197,253,.22);border-radius:22px;padding:18px;margin:16px 0;box-shadow:0 14px 40px rgba(0,0,0,.24)}
     input,select,textarea,button{font:inherit}
     input,select,textarea{width:100%;background:#06172e;color:#fff;border:1px solid rgba(147,197,253,.28);border-radius:12px;padding:11px 13px}
-    textarea{min-height:80px}
+    textarea{min-height:80px;resize:vertical}
     button{border:0;border-radius:12px;padding:11px 15px;font-weight:1000;cursor:pointer;background:linear-gradient(90deg,#2563eb,#7c3aed);color:#fff}
     button.secondary{background:#334155}
     button.good{background:#16a34a}
+    button.danger{background:#dc2626}
+    button.warn{background:#f59e0b;color:#111827}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    label{display:block;font-size:13px;color:#bfdbfe;font-weight:800;margin:8px 0 6px}
     .row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
     .toolbar{display:grid;grid-template-columns:1fr 220px 160px;gap:12px;align-items:end}
-    .orderGrid{display:grid;grid-template-columns:1.3fr .9fr .8fr;gap:14px}
+    .orderGrid{display:grid;grid-template-columns:1.05fr 1.25fr .9fr;gap:14px}
     .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+    .editGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .priceGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     .pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:1000;background:#1d4ed8;margin:2px}
     .pill.pending{background:#f59e0b;color:#111827}.pill.paid{background:#16a34a}.pill.sent{background:#7c3aed}.pill.cancelled{background:#dc2626}
-    .small{font-size:13px;color:#cbd5e1}
+    .small{font-size:13px;color:#cbd5e1;word-break:break-all}
     .templates{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-    .proof{display:block;margin-top:8px;color:#93c5fd;font-weight:900}
+    .proof{display:inline-block;margin-top:8px;color:#93c5fd;font-weight:900}
     .orderText{white-space:pre-wrap;background:#06172e;border:1px solid rgba(147,197,253,.18);border-radius:14px;padding:12px;max-height:240px;overflow:auto;font-size:13px;color:#dbeafe}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .hidden{display:none}
     .error{color:#fecaca;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);padding:12px;border-radius:14px;margin:12px 0}
     .success{color:#bbf7d0;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);padding:12px;border-radius:14px;margin:12px 0}
-    @media(max-width:900px){.toolbar,.orderGrid,.meta,.row{grid-template-columns:1fr}}
+    .mutedBox{background:rgba(148,163,184,.08);border:1px dashed rgba(148,163,184,.22);border-radius:14px;padding:12px;margin-top:10px}
+    @media(max-width:1050px){.toolbar,.orderGrid,.meta,.row,.editGrid,.priceGrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>课堂游戏订单后台</h1>
-    <p>查看购买者资料、配套、模板编号、付款截图，并更新订单状态。</p>
+    <p>查看、修改或删除订购记录。建议只删除测试订单；正式订单建议改为「取消 / 有问题」并保留记录。</p>
 
     <section class="login" id="loginBox">
       <div class="row">
@@ -52,7 +61,7 @@
     <section class="toolbar hidden" id="toolbar">
       <div>
         <label>搜索</label>
-        <input id="search" placeholder="姓名 / 电话 / 电邮 / 模板编号">
+        <input id="search" placeholder="姓名 / 电话 / 电邮 / 模板编号 / 配套">
       </div>
       <div>
         <label>状态</label>
@@ -96,6 +105,21 @@ function statusText(s){
   }[s] || s || 'pending';
 }
 
+function escapeHtml(s=''){
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+
+function templatesToText(v){
+  if(Array.isArray(v)) return v.join(', ');
+  if(!v) return '';
+  try{
+    const parsed = JSON.parse(v);
+    return Array.isArray(parsed) ? parsed.join(', ') : String(v);
+  }catch(e){
+    return String(v);
+  }
+}
+
 async function loadOrders(){
   const res = await fetch('/api/admin-orders?password=' + encodeURIComponent(ADMIN_PASSWORD));
   const data = await res.json();
@@ -111,8 +135,8 @@ function matchOrder(o){
   if(!q) return true;
   const all = [
     o.buyer_name,o.buyer_phone,o.buyer_email,o.plan,
-    JSON.stringify(o.selected_templates || []),
-    o.order_text
+    templatesToText(o.selected_templates),
+    o.order_text,o.admin_note
   ].join(' ').toLowerCase();
   return all.includes(q);
 }
@@ -123,66 +147,138 @@ function renderOrders(){
     $('orders').innerHTML = '<p>没有订单。</p>';
     return;
   }
-  $('orders').innerHTML = list.map(o => `
+  $('orders').innerHTML = list.map(o => {
+    const templatesText = templatesToText(o.selected_templates);
+    return `
     <article class="order" data-id="${o.id}">
       <div class="orderGrid">
         <div>
-          <h2>${o.buyer_name || '-'}</h2>
+          <h2>${escapeHtml(o.buyer_name || '-')}</h2>
           <div class="small">${fmtDate(o.created_at)}</div>
           <div class="meta">
-            <div><b>电话</b><br>${o.buyer_phone || '-'}</div>
-            <div><b>电邮</b><br>${o.buyer_email || '-'}</div>
-            <div><b>配套</b><br>${o.plan || '-'}</div>
-            <div><b>状态</b><br><span class="pill ${o.status || 'pending'}">${statusText(o.status)}</span></div>
+            <div><b>电话</b><br>${escapeHtml(o.buyer_phone || '-')}</div>
+            <div><b>电邮</b><br>${escapeHtml(o.buyer_email || '-')}</div>
+            <div><b>配套</b><br>${escapeHtml(o.plan || '-')}</div>
+            <div><b>状态</b><br><span class="pill ${escapeHtml(o.status || 'pending')}">${statusText(o.status)}</span></div>
             <div><b>原价</b><br>${money(o.original_price)}</div>
             <div><b>特价</b><br>${money(o.final_price)}</div>
             <div><b>优惠</b><br>${money(o.discount_amount)}</div>
-            <div><b>订单ID</b><br><span class="small">${o.id}</span></div>
+            <div><b>订单ID</b><br><span class="small">${escapeHtml(o.id)}</span></div>
           </div>
-          <div class="templates">${(Array.isArray(o.selected_templates)?o.selected_templates:[]).map(x=>`<span class="pill">${x}</span>`).join('')}</div>
-          ${o.payment_proof_url ? `<a class="proof" href="${o.payment_proof_url}" target="_blank">查看付款截图</a>` : '<span class="small">没有付款截图</span>'}
+          <div class="templates">${templatesText.split(',').map(x=>x.trim()).filter(Boolean).map(x=>`<span class="pill">${escapeHtml(x)}</span>`).join('')}</div>
+          ${o.payment_proof_url ? `<a class="proof" href="${escapeHtml(o.payment_proof_url)}" target="_blank" rel="noopener">查看付款截图</a>` : '<span class="small">没有付款截图</span>'}
+          <div class="mutedBox small">
+            订单建立时间：${fmtDate(o.created_at)}<br>
+            账号发送时间：${fmtDate(o.sent_account_at)}
+          </div>
         </div>
+
         <div>
-          <label>订单内容</label>
+          <label>订购者资料</label>
+          <div class="editGrid">
+            <div><label>姓名</label><input class="buyerName" value="${escapeHtml(o.buyer_name || '')}"></div>
+            <div><label>电话</label><input class="buyerPhone" value="${escapeHtml(o.buyer_phone || '')}"></div>
+            <div><label>电邮</label><input class="buyerEmail" value="${escapeHtml(o.buyer_email || '')}"></div>
+            <div><label>购买配套</label><input class="planInput" value="${escapeHtml(o.plan || '')}"></div>
+          </div>
+          <label>模板编号，用逗号分隔</label>
+          <input class="templatesInput" value="${escapeHtml(templatesText)}" placeholder="例如：S001, P003, H007 或 ALL">
+          <div class="priceGrid">
+            <div><label>原价 RM</label><input class="originalPrice" type="number" min="0" step="1" value="${Number(o.original_price || 0)}"></div>
+            <div><label>特价 RM</label><input class="finalPrice" type="number" min="0" step="1" value="${Number(o.final_price || 0)}"></div>
+            <div><label>优惠 RM</label><input class="discountAmount" type="number" min="0" step="1" value="${Number(o.discount_amount || 0)}"></div>
+          </div>
+          <label>原始订单内容</label>
           <div class="orderText">${escapeHtml(o.order_text || '')}</div>
         </div>
+
         <div>
-          <label>状态</label>
+          <label>订单状态</label>
           <select class="statusSelect">
             <option value="pending" ${o.status==='pending'?'selected':''}>待确认</option>
             <option value="paid" ${o.status==='paid'?'selected':''}>已确认付款</option>
             <option value="sent" ${o.status==='sent'?'selected':''}>已发送账号</option>
             <option value="cancelled" ${o.status==='cancelled'?'selected':''}>取消 / 有问题</option>
           </select>
-          <label style="margin-top:12px;display:block">管理员备注</label>
+          <label>管理员备注</label>
           <textarea class="adminNote" placeholder="备注">${escapeHtml(o.admin_note || '')}</textarea>
-          <button class="good saveBtn" style="margin-top:12px;width:100%">保存状态 / 备注</button>
+          <div class="actions">
+            <button class="good saveBtn">保存修改</button>
+            <button class="danger deleteBtn">删除订单</button>
+          </div>
         </div>
       </div>
-    </article>
-  `).join('');
+    </article>`;
+  }).join('');
 
   document.querySelectorAll('.saveBtn').forEach(btn => btn.addEventListener('click', saveOrder));
+  document.querySelectorAll('.deleteBtn').forEach(btn => btn.addEventListener('click', deleteOrder));
 }
 
-function escapeHtml(s=''){
-  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+function getCardValues(card){
+  return {
+    password: ADMIN_PASSWORD,
+    id: card.dataset.id,
+    buyer_name: card.querySelector('.buyerName').value.trim(),
+    buyer_phone: card.querySelector('.buyerPhone').value.trim(),
+    buyer_email: card.querySelector('.buyerEmail').value.trim(),
+    plan: card.querySelector('.planInput').value.trim(),
+    selected_templates: card.querySelector('.templatesInput').value.trim(),
+    original_price: card.querySelector('.originalPrice').value,
+    final_price: card.querySelector('.finalPrice').value,
+    discount_amount: card.querySelector('.discountAmount').value,
+    status: card.querySelector('.statusSelect').value,
+    admin_note: card.querySelector('.adminNote').value,
+    sent_account_at: card.querySelector('.statusSelect').value === 'sent' ? new Date().toISOString() : null
+  };
 }
 
 async function saveOrder(e){
-  const card = e.target.closest('.order');
-  const id = card.dataset.id;
-  const status = card.querySelector('.statusSelect').value;
-  const admin_note = card.querySelector('.adminNote').value;
+  const btn = e.target;
+  const card = btn.closest('.order');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+  try{
+    const res = await fetch('/api/admin-orders', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(getCardValues(card))
+    });
+    const data = await res.json();
+    if(!res.ok || !data.ok) throw new Error(data.error || '保存失败');
+    await loadOrders();
+  }catch(err){
+    alert(err.message || '保存失败');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = '保存修改';
+  }
+}
 
-  const res = await fetch('/api/admin-orders', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ password: ADMIN_PASSWORD, id, status, admin_note, sent_account_at: status === 'sent' ? new Date().toISOString() : null })
-  });
-  const data = await res.json();
-  if(!res.ok || !data.ok) return alert(data.error || '保存失败');
-  await loadOrders();
+async function deleteOrder(e){
+  const card = e.target.closest('.order');
+  const name = card.querySelector('.buyerName').value.trim() || '这笔订单';
+  const ok = confirm(`确定要删除「${name}」的订单吗？\n\n删除后无法在后台恢复。建议正式订单只改为「取消 / 有问题」，不要删除。`);
+  if(!ok) return;
+
+  const btn = e.target;
+  btn.disabled = true;
+  btn.textContent = '删除中...';
+  try{
+    const res = await fetch('/api/admin-orders', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: ADMIN_PASSWORD, id: card.dataset.id, action: 'delete' })
+    });
+    const data = await res.json();
+    if(!res.ok || !data.ok) throw new Error(data.error || '删除失败');
+    await loadOrders();
+  }catch(err){
+    alert(err.message || '删除失败');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = '删除订单';
+  }
 }
 
 $('loginBtn').onclick = async ()=>{
