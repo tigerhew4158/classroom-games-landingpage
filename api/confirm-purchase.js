@@ -1,117 +1,191 @@
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tigerhew@gmail.com';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'payment-proofs';
 
-function escapeHtml(value = '') {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+function jsonResponse(res, status, data) {
+  res.statusCode = status;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify(data));
 }
 
 async function readJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}');
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
   const raw = Buffer.concat(chunks).toString('utf8');
-  return JSON.parse(raw || '{}');
+  return raw ? JSON.parse(raw) : {};
 }
 
-function htmlEmail(title, bodyText) {
-  const safeBody = escapeHtml(bodyText).replace(/\n/g, '<br>');
-  return `
-  <div style="font-family:Arial,'Microsoft YaHei',sans-serif;line-height:1.65;color:#0f172a">
-    <h2 style="margin:0 0 14px;color:#0f172a">${escapeHtml(title)}</h2>
-    <div style="padding:16px;border:1px solid #dbeafe;border-radius:12px;background:#f8fafc">${safeBody}</div>
-  </div>`;
+function requireSupabase() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+  }
 }
 
-async function sendResendEmail({ to, subject, text, attachments = [] }) {
-  if (!process.env.RESEND_API_KEY) throw new Error('Missing RESEND_API_KEY');
-  if (!process.env.FROM_EMAIL) throw new Error('Missing FROM_EMAIL');
-
-  const payload = {
-    from: process.env.FROM_EMAIL,
-    to: Array.isArray(to) ? to : [to],
-    subject,
-    text,
-    html: htmlEmail(subject, text)
+function getHeader() {
+  return {
+    apikey: SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`
   };
-  if (attachments.length) payload.attachments = attachments;
+}
 
-  const response = await fetch('https://api.resend.com/emails', {
+function safeName(value = '') {
+  return String(value).replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 80) || 'file';
+}
+
+function extractTemplateCodes(orderText = '') {
+  const codes = Array.from(new Set(String(orderText).match(/\b[SPH]\d{3}\b/gi) || []));
+  if (/ALL\s*\/|全站模板|All templates|Semua templat/i.test(orderText) && codes.length === 0) return ['ALL'];
+  return codes.map(code => code.toUpperCase());
+}
+
+function extractPlan(orderText = '') {
+  const m = String(orderText).match(/(?:购买方案|Plan|Pakej)\s*[:：]\s*(.+)/i);
+  return m ? m[1].trim() : '';
+}
+
+function extractAmount(orderText = '', labelRegex) {
+  const m = String(orderText).match(labelRegex);
+  return m ? Number(m[1]) || 0 : 0;
+}
+
+function parseOrderMeta(orderText = '') {
+  const original_price = extractAmount(orderText, /(?:原价|Original price|Harga asal)\s*[:：]\s*RM\s*(\d+(?:\.\d+)?)/i);
+  const final_price = extractAmount(orderText, /(?:预估总额|Estimated total|Jumlah anggaran)\s*[:：]\s*RM\s*(\d+(?:\.\d+)?)/i)
+    || extractAmount(orderText, /(?:配套特价|Special price|Harga promosi)\s*[:：]\s*RM\s*(\d+(?:\.\d+)?)/i);
+  const discount_amount = extractAmount(orderText, /(?:优惠|Savings|Penjimatan)\s*[:：]\s*RM\s*(\d+(?:\.\d+)?)/i);
+  return {
+    plan: extractPlan(orderText),
+    selected_templates: extractTemplateCodes(orderText),
+    original_price,
+    final_price,
+    discount_amount
+  };
+}
+
+async function uploadPaymentProof(paymentProof, orderId) {
+  if (!paymentProof || !paymentProof.contentBase64) return { url: '', path: '' };
+
+  const filename = safeName(paymentProof.filename || 'payment-proof');
+  const mimeType = paymentProof.mimeType || 'application/octet-stream';
+  const ext = filename.includes('.') ? filename.split('.').pop() : 'bin';
+  const objectPath = `${orderId}/${Date.now()}_${safeName(filename)}`;
+  const buffer = Buffer.from(paymentProof.contentBase64, 'base64');
+
+  const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${SUPABASE_STORAGE_BUCKET}/${objectPath}`;
+  const response = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: {
+      ...getHeader(),
+      'Content-Type': mimeType,
+      'x-upsert': 'true'
+    },
+    body: buffer
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Supabase Storage upload failed: ${response.status} ${detail}`);
+  }
+
+  const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_STORAGE_BUCKET}/${objectPath}`;
+  return { url: publicUrl, path: objectPath };
+}
+
+async function insertOrder(order) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
+      ...getHeader(),
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation'
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(order)
   });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(`Resend error: ${JSON.stringify(data)}`);
-  return data;
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Supabase order insert failed: ${response.status} ${detail}`);
+  }
+
+  const rows = await response.json();
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
+async function updateOrderProof(id, proof) {
+  if (!id) return;
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: {
+      ...getHeader(),
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation'
+    },
+    body: JSON.stringify({
+      payment_proof_url: proof.url,
+      payment_proof_path: proof.path
+    })
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Supabase proof update failed: ${response.status} ${detail}`);
+  }
 }
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).json({ ok: true });
-  if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  if (req.method === 'OPTIONS') return jsonResponse(res, 200, { ok: true });
+  if (req.method !== 'POST') return jsonResponse(res, 405, { ok: false, error: 'Method not allowed' });
 
   try {
-    const body = await readJsonBody(req);
-    const buyer = body.buyer || {};
-    const orderText = body.orderText || '';
-    const lang = body.lang || 'zh';
+    requireSupabase();
+    const data = await readJsonBody(req);
+    const buyer = data.buyer || {};
+    const orderText = data.orderText || '';
+    const meta = parseOrderMeta(orderText);
 
-    if (!buyer.email) return res.status(400).json({ ok: false, error: 'Buyer email is required' });
-    if (!buyer.name) return res.status(400).json({ ok: false, error: 'Buyer name is required' });
-    if (!orderText) return res.status(400).json({ ok: false, error: 'Order text is required' });
-
-    const proof = body.paymentProof;
-    const attachments = [];
-    if (proof && proof.contentBase64 && proof.filename) {
-      attachments.push({ filename: proof.filename, content: proof.contentBase64 });
+    if (!buyer.name || !buyer.email) {
+      return jsonResponse(res, 400, { ok: false, error: 'Missing buyer name or email' });
     }
 
-    const subjectMap = {
-      zh: '课堂游戏网站购买订单',
-      en: 'Classroom Game Website Purchase Order',
-      ms: 'Pesanan Pembelian Laman Permainan Kelas'
-    };
-    const buyerSubjectMap = {
-      zh: '课堂游戏网站订单确认',
-      en: 'Classroom Game Website Order Confirmation',
-      ms: 'Pengesahan Pesanan Laman Permainan Kelas'
+    const orderPayload = {
+      buyer_name: buyer.name || '',
+      buyer_phone: buyer.phone || '',
+      buyer_email: buyer.email || '',
+      plan: meta.plan || '',
+      selected_templates: meta.selected_templates || [],
+      original_price: meta.original_price || 0,
+      final_price: meta.final_price || 0,
+      discount_amount: meta.discount_amount || 0,
+      payment_proof_url: '',
+      payment_proof_path: '',
+      status: 'pending',
+      admin_note: '',
+      lang: data.lang || 'zh',
+      order_text: orderText,
+      raw: data
     };
 
-    const adminText = `阿虎老师您好，以下是新的课堂游戏网站购买订单：\n\n${orderText}\n\n提交时间：${body.submittedAt || new Date().toISOString()}\n页面：${body.pageUrl || '-'}\n\n备注：WhatsApp 通知采用手动确认发送，购买者提交后会打开 WhatsApp 并需按 Send。`;
+    const inserted = await insertOrder(orderPayload);
+    let proof = { url: '', path: '' };
 
-    const buyerTextMap = {
-      zh: `谢谢您的购买，已完成购买程序，系统会在24小时内处理。请耐心等候。\n\n系统会通过电邮，发送游戏平台登入账号及密码。\n\n您的订单资料：\n${orderText}`,
-      en: `Thank you for your purchase. The purchase process has been completed. The system will process it within 24 hours. Please wait patiently.\n\nThe game platform login account and password will be sent to you by email.\n\nYour order details:\n${orderText}`,
-      ms: `Terima kasih atas pembelian anda. Proses pembelian telah selesai. Sistem akan memprosesnya dalam masa 24 jam. Sila tunggu dengan sabar.\n\nAkaun log masuk dan kata laluan platform permainan akan dihantar melalui e-mel.\n\nButiran pesanan anda:\n${orderText}`
-    };
+    if (data.paymentProof && inserted && inserted.id) {
+      proof = await uploadPaymentProof(data.paymentProof, inserted.id);
+      await updateOrderProof(inserted.id, proof);
+    }
 
-    const adminEmail = await sendResendEmail({
-      to: ADMIN_EMAIL,
-      subject: subjectMap[lang] || subjectMap.zh,
-      text: adminText,
-      attachments
+    return jsonResponse(res, 200, {
+      ok: true,
+      message: 'Order saved to Supabase',
+      orderId: inserted && inserted.id,
+      paymentProofUrl: proof.url
     });
-
-    const buyerEmail = await sendResendEmail({
-      to: buyer.email,
-      subject: buyerSubjectMap[lang] || buyerSubjectMap.zh,
-      text: buyerTextMap[lang] || buyerTextMap.zh
-    });
-
-    return res.status(200).json({ ok: true, adminEmail, buyerEmail, whatsapp: { mode: 'manual_wa_me' } });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ ok: false, error: error.message || 'Server error' });
+    return jsonResponse(res, 500, {
+      ok: false,
+      error: error.message || 'Server error'
+    });
   }
 };

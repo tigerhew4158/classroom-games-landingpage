@@ -1,3 +1,6 @@
 {
-  "type": "commonjs"
+  "type": "commonjs",
+  "scripts": {
+    "check": "node --check api/confirm-purchase.js && node --check api/admin-orders.js"
+  }
 }
