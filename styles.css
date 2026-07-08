@@ -305,3 +305,9 @@ button,a,input,select,label,.gameCard,.miniBtn,.filter,.langBtn{pointer-events:a
     max-width: 340px !important;
   }
 }
+
+
+/* === v19 remove manual WhatsApp order button === */
+#whatsappOrder{
+  display:none !important;
+}

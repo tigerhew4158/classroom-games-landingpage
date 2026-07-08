@@ -59,3 +59,13 @@
 - 马来文界面的订单预览已改为马来文，不再出现中文字段。
 - 保留 Supabase 后台订单数据库功能。
 - 保留付款截图上传与 `/admin.html` 后台。
+
+
+## v19 更新：确认订购流程修正
+- 按下「确认购买」后，不再出现「Preparing WhatsApp」窗口。
+- 提交中讯息改为：
+  - 中文：系统正把订购资讯记录中，请等一下哦。
+  - 英文：The system is recording your order information. Please wait a moment.
+  - 马来文：Sistem sedang merekodkan maklumat pesanan anda. Sila tunggu sebentar.
+- 移除付款区下方「用 WhatsApp 发送给阿虎老师」按钮。
+- 订单仍会写入 Supabase 后台数据库。
