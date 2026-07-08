@@ -7,6 +7,30 @@ const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll
 let lang=localStorage.getItem('landing_lang_v12')||'zh';
 let currentFilter='all', currentModal=null, currentModalView='screen';
 function t(k){return (I18N[lang]&&I18N[lang][k])||I18N.zh[k]||k;}
+const ORDER_PREVIEW = {
+  zh: {
+    title: '课堂游戏网站购买申请',
+    buyerName: '老师姓名',
+    buyerPhone: '联系电话',
+    allTemplates: 'ALL / 全站模板',
+    savingPercentWrap: (txt) => `（${txt}）`
+  },
+  en: {
+    title: 'Classroom Games Website Purchase Request',
+    buyerName: 'Teacher name',
+    buyerPhone: 'Contact number',
+    allTemplates: 'ALL / All templates',
+    savingPercentWrap: (txt) => `(${txt})`
+  },
+  ms: {
+    title: 'Permohonan Pembelian Laman Permainan Kelas',
+    buyerName: 'Nama guru',
+    buyerPhone: 'Nombor telefon',
+    allTemplates: 'SEMUA / Semua templat',
+    savingPercentWrap: (txt) => `(${txt})`
+  }
+};
+function orderLabel(k){ return (ORDER_PREVIEW[lang] && ORDER_PREVIEW[lang][k]) || ORDER_PREVIEW.zh[k] || k; }
 function gt(g){return g[lang]||g.zh;}
 function gname(g){return gt(g).name||g.code;}
 function gdesc(g){return gt(g).desc||'';}
@@ -60,10 +84,26 @@ function discountHtml(){return `<div class="discountRows"><div class="discountRo
 function updateSummary(){ const sel=selectedGames(),st=status(); $('#payAmount')&&($('#payAmount').textContent='RM'+specialTotal()); $('#confirmSelection').disabled=!st.ok; $('#selectionSummary').innerHTML=`<h4>${t('orderConfirmTitle')}</h4><div><b>${t('orderPlan')}：</b>${$('#plan').selectedOptions[0].textContent}</div>${discountHtml()}<div class="${st.ok?'':'warning'}">${st.msg}</div><div class="summaryItems">${sel.map(g=>`<div class="summaryItem"><span>${g.code} · ${levelLabel(g.level)} · ${gname(g)}</span><strong>RM${g.price}</strong></div>`).join('')}</div>`; }
 function hidePayment(){ $('#paymentPanel')?.classList.add('hidden'); }
 function showPayment(){ const st=status(); if(!st.ok)return alert(st.msg); $('#paymentPanel')?.classList.remove('hidden'); generateOrder(); }
-function orderText(){ const sel=selectedGames(); const games=plan()==='all'?'ALL / 全站模板':sel.map(g=>`${g.code} ${gname(g)}`).join(', '); const proof=$('#paymentProof')?.files?.[0]?.name||'-'; return `课堂游戏网站购买申请\n${t('orderPlan')}：${$('#plan').selectedOptions[0].textContent}\n老师姓名：${$('#buyerName').value||'-'}\n联系电话：${$('#buyerPhone').value||'-'}\n${t('receiptEmail')}：${$('#buyerEmail').value||'-'}\n${t('orderGames')}：${games||'-'}\n${t('originalPrice')}：RM${originalTotal()}\n${t('specialPrice')}：RM${specialTotal()}\n${t('saving')}：RM${saving()}${saving()?`（${t('savingPercent')} ${savingPercent()}%）`:''}\n${t('orderTotal')}：RM${specialTotal()}\n${t('paymentProof')}：${proof}\n${t('activationNotice')}`; }
+function orderText(){
+ const sel=selectedGames();
+ const games=plan()==='all'?orderLabel('allTemplates'):sel.map(g=>`${g.code} ${gname(g)}`).join(', ');
+ const proof=$('#paymentProof')?.files?.[0]?.name||'-';
+ const savingText=saving()?orderLabel('savingPercentWrap')(`${t('savingPercent')} ${savingPercent()}%`):'';
+ return `${orderLabel('title')}
+${t('orderPlan')}: ${$('#plan').selectedOptions[0].textContent}
+${orderLabel('buyerName')}: ${$('#buyerName').value||'-'}
+${orderLabel('buyerPhone')}: ${$('#buyerPhone').value||'-'}
+${t('receiptEmail')}: ${$('#buyerEmail').value||'-'}
+${t('orderGames')}: ${games||'-'}
+${t('originalPrice')}: RM${originalTotal()}
+${t('specialPrice')}: RM${specialTotal()}
+${t('saving')}: RM${saving()}${savingText}
+${t('orderTotal')}: RM${specialTotal()}
+${t('paymentProof')}: ${proof}
+${t('activationNotice')}`; }
 function generateOrder(){ const text=orderText(); $('#preview').textContent=text; $('#whatsappOrder').href=`https://wa.me/${AHU_WHATSAPP}?text=${encodeURIComponent(text)}`; return text; }
 function fileToBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const s=String(r.result||'');resolve({filename:file.name,mimeType:file.type||'application/octet-stream',contentBase64:s.includes(',')?s.split(',')[1]:s});};r.onerror=reject;r.readAsDataURL(file);});}
-async function submitOrder(e){ e&&e.preventDefault(); const name=$('#buyerName').value.trim(), email=$('#buyerEmail').value.trim(); if(!name)return alert(t('needName')); if(!email)return alert(t('needEmail')); const text=generateOrder(); const btn=$('#copy'); const old=btn.textContent; btn.disabled=true; btn.textContent=t('submitting'); let waWin=null; try{waWin=window.open('', '_blank'); if(waWin)waWin.document.write('<p style="font-family:Arial;padding:20px">Preparing WhatsApp...</p>');}catch(_){} try{let proof=null; const f=$('#paymentProof')?.files?.[0]; if(f)proof=await fileToBase64(f); const res=await fetch('/api/confirm-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang,buyer:{name,phone:$('#buyerPhone').value.trim(),email},orderText:text,paymentProof:proof,pageUrl:location.href,submittedAt:new Date().toISOString()})}); const data=await res.json().catch(()=>({})); if(!res.ok||!data.ok)throw new Error(data.error||'Submit failed'); const wa=$('#whatsappOrder').href; if(waWin)waWin.location.href=wa; else window.open(wa,'_blank'); alert(t('successMsg')); }catch(err){ if(waWin&&!waWin.closed)waWin.close(); alert(t('submitFail')+'\n'+(err.message||err)); } finally{btn.disabled=false;btn.textContent=t('confirmPurchase');}}
+async function submitOrder(e){ e&&e.preventDefault(); const name=$('#buyerName').value.trim(), email=$('#buyerEmail').value.trim(); if(!name)return alert(t('needName')); if(!email)return alert(t('needEmail')); const text=generateOrder(); const btn=$('#copy'); const old=btn.textContent; btn.disabled=true; btn.textContent=t('submitting'); let waWin=null; try{waWin=window.open('', '_blank'); if(waWin)waWin.document.write(`<p style="font-family:Arial;padding:20px">${lang==='zh'?'正在准备 WhatsApp...':lang==='ms'?'Sedang menyediakan WhatsApp...':'Preparing WhatsApp...'}</p>`);}catch(_){} try{let proof=null; const f=$('#paymentProof')?.files?.[0]; if(f)proof=await fileToBase64(f); const res=await fetch('/api/confirm-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang,buyer:{name,phone:$('#buyerPhone').value.trim(),email},orderText:text,paymentProof:proof,pageUrl:location.href,submittedAt:new Date().toISOString()})}); const data=await res.json().catch(()=>({})); if(!res.ok||!data.ok)throw new Error(data.error||'Submit failed'); const wa=$('#whatsappOrder').href; if(waWin)waWin.location.href=wa; else window.open(wa,'_blank'); alert(t('successMsg')); }catch(err){ if(waWin&&!waWin.closed)waWin.close(); alert(t('submitFail')+'\n'+(err.message||err)); } finally{btn.disabled=false;btn.textContent=t('confirmPurchase');}}
 function bind(){ $$('.langBtn').forEach(b=>b.onclick=()=>setLanguage(b.dataset.lang)); $$('.filter').forEach(b=>b.onclick=()=>renderGames(b.dataset.f)); $$('.plan').forEach(b=>b.onclick=e=>{e.preventDefault();$('#plan').value=b.dataset.plan;renderPurchase();updateSummary();generateOrder();hidePayment();document.querySelector('#checkoutFlow')?.scrollIntoView({behavior:'smooth'});}); $('#plan').onchange=()=>{renderPurchase();updateSummary();generateOrder();hidePayment();}; ['buyerName','buyerPhone','buyerEmail'].forEach(id=>$('#'+id).oninput=generateOrder); $('#confirmSelection').onclick=showPayment; $('#paymentProof').onchange=()=>{$('#proofFileName').textContent=$('#paymentProof').files[0]?.name||t('noFile');generateOrder();}; $('#copy').onclick=submitOrder; $('#whatsappOrder').onclick=()=>{generateOrder();}; $('#closeModal').onclick=()=>{$('#modal').classList.add('hidden');currentModal=null;}; $('#modal').onclick=e=>{if(e.target.id==='modal'){$('#modal').classList.add('hidden');currentModal=null;}}; $('#closeLightbox').onclick=()=>$('#lightbox').classList.add('hidden'); $('#lightbox').onclick=e=>{if(e.target.id==='lightbox')$('#lightbox').classList.add('hidden');}; document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',()=>setTimeout(()=>{},0));});}
 function init(){applyText();renderGames();renderPurchase();updateSummary();generateOrder();bind();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
